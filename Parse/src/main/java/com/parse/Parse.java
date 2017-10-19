@@ -14,6 +14,8 @@ import android.content.pm.ResolveInfo;
 import android.os.Bundle;
 import android.util.Log;
 
+import org.apache.cordova.core.App;
+
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -94,7 +96,7 @@ public class Parse {
         // Yes, our public API states we cannot be null. But for unit tests, it's easier just to
         // support null here.
         if (context != null) {
-          Context applicationContext = context.getApplicationContext();
+          Context applicationContext = App.getContext();
           Bundle metaData = ManifestInfo.getApplicationMetadata(applicationContext);
           if (metaData != null) {
             server(metaData.getString(PARSE_SERVER_URL));
@@ -377,7 +379,7 @@ public class Parse {
       throw new RuntimeException(ex);
     }
 
-    Context applicationContext = configuration.context.getApplicationContext();
+    Context applicationContext = App.getContext();
 
     ParseHttpClient.setKeepAlive(true);
     ParseHttpClient.setMaxConnections(20);
@@ -459,7 +461,7 @@ public class Parse {
 
   static Context getApplicationContext() {
     checkContext();
-    return ParsePlugins.Android.get().applicationContext();
+    return App.getContext();
   }
 
   /**
@@ -621,7 +623,7 @@ public class Parse {
   }
 
   static void checkContext() {
-    if (ParsePlugins.Android.get().applicationContext() == null) {
+    if (App.getContext() == null) {
       throw new RuntimeException("applicationContext is null. "
               + "You must call Parse.initialize(Context)"
               + " before using the Parse library.");
@@ -629,7 +631,7 @@ public class Parse {
   }
 
   static boolean hasPermission(String permission) {
-    return (getApplicationContext().checkCallingOrSelfPermission(permission) ==
+    return (App.getContext().checkCallingOrSelfPermission(permission) ==
             PackageManager.PERMISSION_GRANTED);
   }
 
